@@ -73,9 +73,9 @@ netsfile = sys.argv[2]
 
 components, board_pins = load_bookshelf.read_pl(plfile)
 nets = load_bookshelf.read_nets(netsfile, components, board_pins)
-eu_wl = euclidean(components, board_pins, nets)
+#eu_wl = euclidean(components, board_pins, nets)
 hpwl = hpwl(components, board_pins, nets)
-mh_wl = manhattan(components, board_pins, nets)
+#mh_wl = manhattan(components, board_pins, nets)
 
 #print('euclidean: ' + str(eu_wl))
 print('hpwl: ' + str(hpwl))

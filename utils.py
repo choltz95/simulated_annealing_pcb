@@ -11,7 +11,6 @@ def plot_circuit(circuit_name, components, nets, board_dim, stats = None):
 	board_lower_left_corner = [min(board_dim[0]), min(board_dim[1])]
 	width_height = [max(board_dim[0]) - min(board_dim[0]), \
 				    max(board_dim[1]) - min(board_dim[1])]
-	print(width_height)
 
 	fig, ax = plt.subplots(1)
 	if stats is None:
@@ -47,8 +46,8 @@ def plot_circuit(circuit_name, components, nets, board_dim, stats = None):
 			netlist.append([cx,cy])
 		for i in range(len(netlist)-1):
 			ax.plot([netlist[i][0],netlist[i+1][0]],[netlist[i][1],netlist[i+1][1]], color="blue", linewidth=1, alpha=0.25, linestyle='dashed')
-	plt.xlim(-5, max(width_height) + 5)
-	plt.ylim(-5, max(width_height) + 5)
+	plt.xlim(-25, max(width_height) + 25)
+	plt.ylim(-25, max(width_height) + 25)
 	plt.gca().set_aspect('equal', adjustable='box')
 	plt.show()
 

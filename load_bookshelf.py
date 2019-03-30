@@ -74,6 +74,7 @@ def read_nets(fname,components,board_pins):
 	nets = []
 	pin2comp = {} # {pin : component}
 	comp2pin = {} # {component : [pins]}
+	mod2net = {} # {component: [nets]}
 	i = -1
 	with open(fname, 'r') as f:
 		lines = f.read().splitlines()[8:]
@@ -98,8 +99,12 @@ def read_nets(fname,components,board_pins):
 			#pin = Point([pinx,piny])
 			pin = local_pin_loc
 			nets[i].append([pin_name, pin])
+		if pin_name in mod2net:
+			mod2net[pin_name].append(i)
+		else:
+			mod2net[pin_name] = [i]
 
-	return nets
+	return nets, mod2net
 
 def read_blocks(fname):
 	"""
@@ -135,6 +140,10 @@ def read_blocks(fname):
 def write_pl(fname):
 	pass
 
+#blocksfile = '/Users/orange3xchicken/Downloads/merrill_place_example_1.blocks'
+#blk = read_blocks(blocksfile)
+#print(blk)
+#print(len(blk))
 #plfile = sys.argv[1]
 #netsfile = sys.argv[2]
 #blocksfile = sys.argv[3]

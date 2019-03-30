@@ -14,6 +14,7 @@ from shapely.affinity import translate, rotate
 from rtree import index
 from rtree.index import Rtree
 from tqdm import tqdm
+import itertools
 
 import utils
 
@@ -73,7 +74,7 @@ def explore_cost(grid,
 
 	for _ in tqdm(range(100)):
 		grid = gen_random_grid(grid,board_dim,static_components)
-		c,stats = cost(list(grid), grid, None, connections, [L1_eval,L2_eval])
+		c,stats = cost(list(grid), grid, None, connections, mod2net, [L1_eval,L2_eval])
 		cost_hist.append((grid,c,stats))
 
 def fix_boundary_constraints(grid, element, board_dim):
@@ -114,6 +115,7 @@ def transition(grid,
 		   	   idx, 
 		   	   board_dim, 
 		   	   connections, 
+		   	   mod2net,
 		       static_components, 
 		       iteration,
 		       current_cost,
@@ -136,26 +138,29 @@ def transition(grid,
 	intersections = []
 
 	element1 = random.choice(list(grid))
-	element2 = random.choice(list(grid))
-	while element2 == element1:
-		element2 = random.choice(list(grid))
+
 	c1 = grid[element1].centroid
-	c2 = grid[element2].centroid
 	c1x = c1.x 
 	c1y = c1.x 
-	c2x = c2.x 
-	c2y = c2.y 
 
-	altered_modules = [element1, element2]
-
-	updated_modules = [[(element1, grid[element1]),(element2, grid[element2])]]
+	altered_modules = [element1]
+	updated_modules = [[(element1, grid[element1])]]
 
 	i1 = list(grid).index(element1)
-	i2 = list(grid).index(element2)
 
-	initial_cost, initial_stats = costfunc(altered_modules, grid, idx, connections, l)
 	roll = np.random.random()
 	if(roll<0.4): # swap two modules
+		element2 = random.choice(list(grid))
+		while element2 == element1:
+			element2 = random.choice(list(grid))
+		c2 = grid[element2].centroid
+		c2x = c2.x 
+		c2y = c2.y 
+		altered_modules.append(element2)
+		updated_modules[0].append((element2, grid[element2]))
+		i2 = list(grid).index(element2)
+		initial_cost, initial_stats = costfunc(altered_modules, grid, idx, connections, mod2net, l)
+
 		xtransform = c1x - c2x
 		ytransform = c1y - c2y
 
@@ -170,6 +175,7 @@ def transition(grid,
 		idx.insert(i1, grid[element1].bounds)
 		idx.insert(i2, grid[element2].bounds)
 	elif(roll<0.8): # shift a module
+		initial_cost, initial_stats = costfunc(altered_modules, grid, idx, connections, mod2net, l)
 		try:
 			minx,miny,maxx,maxy = grid[element1].bounds
 		except: # point
@@ -197,19 +203,24 @@ def transition(grid,
 		fix_boundary_constraints(grid, element1, board_dim)
 		idx.insert(i1, grid[element1].bounds)
 	else: # rotate a module
+		initial_cost, initial_stats = costfunc(altered_modules, grid, idx, connections, mod2net, l)
 		randp = random.choice([90,180,270])
 		idx.delete(i1, grid[element1].bounds)
 		grid[element1] = rotate(grid[element1], randp, origin="center")
 		fix_boundary_constraints(grid, element1, board_dim)
 		idx.insert(i1, grid[element1].bounds)
 
-	updated_modules.append([(element1, grid[element1]),\
-							(element2, grid[element2])])
-	transition_cost, transition_stats = costfunc(altered_modules, grid, idx, connections, l)
+	if len(altered_modules) > 1:
+		updated_modules.append([(element1, grid[element1]),\
+								(element2, grid[element2])])
+	else:
+		updated_modules.append([(element1, grid[element1])])
+									
+	transition_cost, transition_stats = costfunc(altered_modules, grid, idx, connections, mod2net, l)
 	updated_cost = current_cost - initial_cost + transition_cost
 	updated_stats = [np.abs(stats[0] - initial_stats[0] + transition_stats[0]), \
 					 stats[1] - initial_stats[1] + transition_stats[1]]
-	#true_cost = costfunc(list(grid),grid,idx,connections,l)
+	#true_cost = costfunc(list(grid),grid,idx,connections, mod2net,l)
 	#print(updated_stats, true_cost[1])
 	return grid, idx, updated_cost, updated_stats, updated_modules
 
@@ -318,6 +329,7 @@ def manhattan():
 def wirelength(modules, 
 			   grid, 
 			   connections, 
+			   mod2net,
 			   is_coyote=False):
 	"""
 	Compute cumulative wirelength
@@ -330,10 +342,10 @@ def wirelength(modules,
 	wirelength = 0
 	module_history = set()
 	hpwl = 0
-	for net in nets:
+	for net in set([n for m in modules for n in mod2net[m]]):
 		plxs = []
 		plys = []
-		for pin in net: # for each pin in connection
+		for pin in nets[net]: # for each pin in connection
 			pname = pin[0]
 			if pname in grid:
 				pinx, piny = utils.pin_pos(pin, grid)
@@ -393,6 +405,7 @@ def cost(modules,
 		 grid,  
 		 idx, 
 		 connections,
+		 mod2net,
 		 l):
 	"""
 	Compute weighted cost
@@ -404,12 +417,13 @@ def cost(modules,
 	:return: float
 	"""
 	l1,l2 = l
-	wl = wirelength(modules, grid, connections)
+	wl = wirelength(modules, grid, connections, mod2net)
 	ia = intersection_area(modules, grid, idx)
 	return l1*wl + l2*ia, [wl, ia]
 
 def annealing(blocks, 
 			  nets, 
+			  mod2net,
 			  board_pins, 
 			  board_dim,
 			  pos,
@@ -439,7 +453,7 @@ def annealing(blocks,
 	for i, key in enumerate(blocks):
 		idx.insert(i, blocks[key].bounds)
 
-	min_cost, min_stats = costfunc(list(blocks), blocks, idx, nets,[l1,l2])
+	min_cost, min_stats = costfunc(list(blocks), blocks, idx, nets, mod2net, [l1,l2])
 
 	cost_history = [min_cost]
 	temp_cost = 1
@@ -459,7 +473,8 @@ def annealing(blocks,
 		for ii in range(10): # 25
 			tempBlocks, idx, temp_cost, temp_stats, updated_modules = transition(blocks,
 																			   idx, board_dim,
-																			   nets, board_pins,
+																			   nets, mod2net,
+																			   board_pins,
 																			   i,
 																			   min_cost, min_stats,
 																			   costfunc,
@@ -492,6 +507,7 @@ def worker(args, output):
 def multistart(grid, 
 			  connections, 
 			  static_components, 
+			  mod2net,
 			  board_dim,
 			  costfunc,
 			  K=5,
@@ -510,7 +526,7 @@ def multistart(grid,
 		manager = mp.Manager()
 		output = manager.Queue()
 		for i in range(num_cpus):
-			p = mp.Process(target=worker, args=((best_grid,connections,static_components,board_dim,i+1,T_0,costfunc,seed),output))
+			p = mp.Process(target=worker, args=((best_grid,connections,mod2net,static_components,board_dim,i+1,T_0,costfunc,seed),output))
 			processes.append(p)
 			p.start()
 
@@ -528,5 +544,5 @@ def multistart(grid,
 		else:
 			cost_history.extend([best_cost]*1000)
 	print('done')
-	best_cost = cost(list(best_grid), best_grid, best_idx, connections,[L1_eval,L2_eval])
+	best_cost = cost(list(best_grid), best_grid, best_idx, connections, mod2net, [L1_eval,L2_eval])
 	return best_grid, best_cost, cost_history, best_stats

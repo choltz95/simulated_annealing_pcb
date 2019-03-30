@@ -76,7 +76,7 @@ cname = 'apte'
 tp = './' + benchmark_dir + set_dir + cname
 components = load_bookshelf.read_blocks(tp+'.blocks')
 placed_components, board_pins = load_bookshelf.read_pl(tp+'.pl')
-nets = load_bookshelf.read_nets(tp+'.nets', components, board_pins)
+nets, mod2net = load_bookshelf.read_nets(tp+'.nets', components, board_pins)
 board_pincoords = [(pin[1].x,pin[1].y) for pin in board_pins.items()]
 board_pinx, board_piny = zip(*board_pincoords)
 board_dim = [max(board_pinx), max(board_piny)] # recover dimension of board from board-pin locations
@@ -232,6 +232,7 @@ sa_start = time.time()
 board_dim = [[0,board_dim[0],board_dim[0],0],[0,0,board_dim[1],board_dim[1]]]
 blocks, cost, storedCost, stats, T, idx = simulatedAnnealing.annealing(components, 
 															  nets, 
+															  mod2net,
 															  board_pins, 
 															  board_dim,
 															  0, 10000000,
