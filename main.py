@@ -223,21 +223,17 @@ for i,row in enumerate(adj):
 
 		connections[module1][module2] = float(weight)
 """
-sa_start = time.time()
-#grid, cost, storedCost, stats = simulatedAnnealing.multistart(components, 
-#															  nets, 
-#															  board_pins, 
-#															  board_dim,
-#															  simulatedAnnealing.cost)
 board_dim = [[0,board_dim[0],board_dim[0],0],[0,0,board_dim[1],board_dim[1]]]
-blocks, cost, storedCost, stats, T, idx = simulatedAnnealing.annealing(components, 
-															  nets, 
-															  mod2net,
-															  board_pins, 
-															  board_dim,
-															  0, 10000000,
-															  simulatedAnnealing.cost)
+sa_start = time.time()
+blocks, cost, storedCost, stats = simulatedAnnealing.multistart(components, 
+																	  nets, 
+																	  mod2net,
+																	  board_pins, 
+																	  board_dim,
+																	  simulatedAnnealing.cost)
 sa_end = time.time()
+
+load_bookshelf.write_pl(cname+'_outtest.pl',blocks,board_pins)
 
 print("Time (s)", sa_end - sa_start)
 print("Iterations", len(storedCost))

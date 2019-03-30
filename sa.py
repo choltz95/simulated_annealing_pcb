@@ -100,7 +100,6 @@ def fix_boundary_constraints(grid, element, board_dim):
 		halfheight = 0
 		cx = xs[0]
 		cy = ys[0]
-
 	if cx + halfwidth > max(board_dim[0]):
 		grid[element] = translate(grid[element], -(cx + halfwidth - max(board_dim[0])),0)
 	elif cx - halfwidth < min(board_dim[0]):
@@ -301,7 +300,6 @@ def intersection_area(modules, grid, idx):
 	intersectional_area = 0
 	module_history = set()
 	if idx is None:
-		print('nyeeeet')
 		for m in modules:
 			module_history.add(m)
 			for mc in list(grid):
@@ -320,10 +318,38 @@ def hpwl():
 	pass
 
 def euclidean():
-	pass
+	wirelength = 0
+	module_history = set()
+	for module in modules:
+		if module not in connections:
+			continue
+		module_history.add(module)
+		centroid = grid[module].centroid
+		cx = centroid.x
+		cy = centroid.y
+		for connected_module in connections[module]:
+			if connected_module in grid and connected_module not in module_history:
+				connected_module_centroid = grid[connected_module].centroid
+				wirelength += np.sqrt(np.square(connected_module_centroid.x - cx) + \
+			  							np.square(connected_module_centroid.y - cy))
+	return int(wirelength)
 
 def manhattan():
-	pass
+	wirelength = 0
+	module_history = set()
+	for module in modules:
+		if module not in connections:
+			continue
+		module_history.add(module)
+		centroid = grid[module].centroid
+		cx = centroid.x
+		cy = centroid.y
+		for connected_module in connections[module]:
+			if connected_module in grid and connected_module not in module_history:
+				connected_module_centroid = grid[connected_module].centroid
+				wirelength += np.abs(connected_module_centroid.x - cx) + \
+							  np.abs(connected_module_centroid.y - cy)
+	return int(wirelength)
 
 #@jit(parallel = True, nogil = True)
 def wirelength(modules, 
@@ -458,7 +484,7 @@ def annealing(blocks,
 	cost_history = [min_cost]
 	temp_cost = 1
 	temp_stats = min_stats
-	for i in tqdm(range(100), desc='annealer: ' + str(pos), position=pos, leave=False): # 1250
+	for i in tqdm(range(1000), desc='annealer: ' + str(pos), position=pos, leave=False): # 1250
 		"""
 		ch = cost_history[:10]
 		delta_cost = [ch[n]-ch[n-1] for n in range(1,len(ch))]
@@ -470,7 +496,7 @@ def annealing(blocks,
 			tqdm.write('converged...')
 			break
 		"""
-		for ii in range(10): # 25
+		for ii in range(20):
 			tempBlocks, idx, temp_cost, temp_stats, updated_modules = transition(blocks,
 																			   idx, board_dim,
 																			   nets, mod2net,
@@ -506,8 +532,8 @@ def worker(args, output):
 
 def multistart(grid, 
 			  connections, 
-			  static_components, 
 			  mod2net,
+			  static_components, 
 			  board_dim,
 			  costfunc,
 			  K=5,
@@ -520,7 +546,6 @@ def multistart(grid,
 	cost_history = []
 	global_a = 0.5
 	T_0 = INF
-	board_dim = [[0,board_dim[0],board_dim[0],0],[0,0,board_dim[1],board_dim[1]]]
 	for k in tqdm(range(K),desc='multi-start'):
 		processes = []
 		manager = mp.Manager()

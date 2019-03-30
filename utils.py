@@ -46,6 +46,9 @@ def plot_circuit(circuit_name, components, nets, board_dim, stats = None):
 			netlist.append([cx,cy])
 		for i in range(len(netlist)-1):
 			ax.plot([netlist[i][0],netlist[i+1][0]],[netlist[i][1],netlist[i+1][1]], color="blue", linewidth=1, alpha=0.25, linestyle='dashed')
+		xs= [ x[0] for x in netlist ]
+		ys= [ x[1] for x in netlist ]
+		ax.scatter(xs,ys,marker='.')
 	plt.xlim(-25, max(width_height) + 25)
 	plt.ylim(-25, max(width_height) + 25)
 	plt.gca().set_aspect('equal', adjustable='box')

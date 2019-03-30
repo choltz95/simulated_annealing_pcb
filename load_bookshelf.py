@@ -72,8 +72,6 @@ def read_nets(fname,components,board_pins):
 	:param fname: .nets filename
 	"""
 	nets = []
-	pin2comp = {} # {pin : component}
-	comp2pin = {} # {component : [pins]}
 	mod2net = {} # {component: [nets]}
 	i = -1
 	with open(fname, 'r') as f:
@@ -128,17 +126,42 @@ def read_blocks(fname):
 			vertices = ast.literal_eval(vstring)
 			poly = Polygon(vertices)
 			components[cname] = poly
-		#else:
-		#	l = line.split()
-		#	pname = l[0]
-		#	print(l)
-		#	coords = Point([int(l[1]),int(l[2])])
-		#	board_pins[pname] = coords
 
 	return components
 
-def write_pl(fname):
-	pass
+def write_pl(fname,components,board_pins):
+	with open(fname,'w') as f:
+		f.write('UMICH blocks 1.0\n')
+		f.write('\n')
+		f.write('\n')
+		f.write('\n')
+		for cname in components:
+			component = components[cname]
+			f.write(cname)
+			f.write('\t')
+			minx,miny,maxx,maxy = component.bounds
+			f.write(str(minx))
+			f.write('\t')
+			f.write(str(miny))
+			f.write('\t')
+			f.write('0')
+			f.write('\t')
+			f.write('DIMS = (' + str(maxx - minx) + ', ' + str(maxy - miny) + ')')
+			f.write(' : N\n')
+
+		f.write('\n')
+
+		for pname in board_pins:
+			if pname in components:
+				pass
+			pin = board_pins[pname]
+			f.write(pname)
+			f.write('\t')
+			f.write(str(pin.x))
+			f.write('\t')
+			f.write(str(pin.y))
+			f.write('\t')
+			f.write(' : N\n')
 
 #blocksfile = '/Users/orange3xchicken/Downloads/merrill_place_example_1.blocks'
 #blk = read_blocks(blocksfile)
