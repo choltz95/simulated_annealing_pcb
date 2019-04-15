@@ -25,7 +25,7 @@ except NotImplementedError:
     num_cpus = 2
        
 INF = 100000
-ALPHA = 0.995
+ALPHA = 0.9999
 ALPHA_INCREASING = False
 
 L1_eval = 0.4
@@ -317,39 +317,56 @@ def intersection_area(modules, grid, idx):
 def hpwl():
 	pass
 
-def euclidean():
+def euclidean(modules, 
+			   grid, 
+			   connections, 
+			   mod2net):
+	nets = connections
 	wirelength = 0
 	module_history = set()
-	for module in modules:
-		if module not in connections:
-			continue
-		module_history.add(module)
-		centroid = grid[module].centroid
-		cx = centroid.x
-		cy = centroid.y
-		for connected_module in connections[module]:
-			if connected_module in grid and connected_module not in module_history:
-				connected_module_centroid = grid[connected_module].centroid
-				wirelength += np.sqrt(np.square(connected_module_centroid.x - cx) + \
-			  							np.square(connected_module_centroid.y - cy))
-	return int(wirelength)
+	ewl = 0
+	for net in set([n for m in modules for n in mod2net[m]]):
+		for i,pini in enumerate(nets[net]): # for each pin in connection
+			pname = pini[0]
+			if pname in grid:
+				pinix, piniy = utils.pin_pos(pini, grid)
+			else:
+				pinix = pini[1].x
+				piniy = pini[1].y
+			for j,pinj in enumerate(nets[net],i+1):
+				pname = pinj[0]
+				if pname in grid:
+					pinjx, pinjy = utils.pin_pos(pinj, grid)
+				else:
+					pinjx = pinj[1].x
+					pinjy = pinj[1].y
+				ewl += np.sqrt(np.square(pinix - pinjx ) + np.square(piniy - pinjy))
+
+	return 0.5*ewl
 
 def manhattan():
+	nets = connections
 	wirelength = 0
 	module_history = set()
-	for module in modules:
-		if module not in connections:
-			continue
-		module_history.add(module)
-		centroid = grid[module].centroid
-		cx = centroid.x
-		cy = centroid.y
-		for connected_module in connections[module]:
-			if connected_module in grid and connected_module not in module_history:
-				connected_module_centroid = grid[connected_module].centroid
-				wirelength += np.abs(connected_module_centroid.x - cx) + \
-							  np.abs(connected_module_centroid.y - cy)
-	return int(wirelength)
+	ewl = 0
+	for net in set([n for m in modules for n in mod2net[m]]):
+		for i,pini in enumerate(nets[net]): # for each pin in connection
+			pname = pini[0]
+			if pname in grid:
+				pinix, piniy = utils.pin_pos(pini, grid)
+			else:
+				pinix = pini[1].x
+				piniy = pini[1].y
+			for j,pinj in enumerate(nets[net],i+1):
+				pname = pinj[0]
+				if pname in grid:
+					pinjx, pinjy = utils.pin_pos(pinj, grid)
+				else:
+					pinjx = pinj[1].x
+					pinjy = pinj[1].y
+				ewl += np.abs(pinix - pinjx) + np.abs(piniy - pinjy)
+
+	return 0.5*ewl
 
 #@jit(parallel = True, nogil = True)
 def wirelength(modules, 
@@ -368,7 +385,8 @@ def wirelength(modules,
 	wirelength = 0
 	module_history = set()
 	hpwl = 0
-	for net in set([n for m in modules for n in mod2net[m]]):
+
+	for net in set([n for m in modules if m in mod2net for n in mod2net[m]]):
 		plxs = []
 		plys = []
 		for pin in nets[net]: # for each pin in connection
@@ -387,6 +405,8 @@ def wirelength(modules,
 		xd = max(plxs) - min(plxs)
 		hpwl += yd + xd
 	return int(hpwl)
+	
+
 
 	"""
 	if is_coyote:
@@ -484,7 +504,7 @@ def annealing(blocks,
 	cost_history = [min_cost]
 	temp_cost = 1
 	temp_stats = min_stats
-	for i in tqdm(range(1000), desc='annealer: ' + str(pos), position=pos, leave=False): # 1250
+	for i in tqdm(range(100), desc='annealer: ' + str(pos), position=pos, leave=False): # 1250
 		"""
 		ch = cost_history[:10]
 		delta_cost = [ch[n]-ch[n-1] for n in range(1,len(ch))]
@@ -496,7 +516,7 @@ def annealing(blocks,
 			tqdm.write('converged...')
 			break
 		"""
-		for ii in range(20):
+		for ii in range(10):
 			tempBlocks, idx, temp_cost, temp_stats, updated_modules = transition(blocks,
 																			   idx, board_dim,
 																			   nets, mod2net,

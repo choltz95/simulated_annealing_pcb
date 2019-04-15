@@ -72,14 +72,20 @@ def get_components(yal_data):
 
 benchmark_dir = 'benchmarks/'
 set_dir = 'mcnc/'
-cname = 'apte'
+cname = 'merrill'
 tp = './' + benchmark_dir + set_dir + cname
-components = load_bookshelf.read_blocks(tp+'.blocks')
-placed_components, board_pins = load_bookshelf.read_pl(tp+'.pl')
-nets, mod2net = load_bookshelf.read_nets(tp+'.nets', components, board_pins)
-board_pincoords = [(pin[1].x,pin[1].y) for pin in board_pins.items()]
-board_pinx, board_piny = zip(*board_pincoords)
-board_dim = [max(board_pinx), max(board_piny)] # recover dimension of board from board-pin locations
+#components = load_bookshelf.read_blocks(tp+'.blocks')
+#placed_components, board_pins = load_bookshelf.read_pl(tp+'.pl')
+#placed_components, board_pins = load_bookshelf.read_pl('./apte_out.pl')
+#nets, mod2net = load_bookshelf.read_nets(tp+'.nets', components, board_pins)
+components = load_bookshelf.read_blocks('./merrill_with_pin_locations_1/merrill_with_pin_locations_1.blocks')
+board_pins = []
+nets, mod2net = load_bookshelf.read_nets('./merrill_with_pin_locations_1/merrill_with_pin_locations_1.nets',components,board_pins)
+
+#board_pincoords = [(pin[1].x,pin[1].y) for pin in board_pins.items()]
+#board_pinx, board_piny = zip(*board_pincoords)
+#board_dim = [max(board_pinx), max(board_piny)] # recover dimension of board from board-pin locations
+board_dim = [200,200]
 
 print(board_dim)
 """
@@ -233,7 +239,7 @@ blocks, cost, storedCost, stats = simulatedAnnealing.multistart(components,
 																	  simulatedAnnealing.cost)
 sa_end = time.time()
 
-load_bookshelf.write_pl(cname+'_outtest.pl',blocks,board_pins)
+load_bookshelf.write_pl(cname+'_outpfpqinit.pl',blocks,board_pins)
 
 print("Time (s)", sa_end - sa_start)
 print("Iterations", len(storedCost))
@@ -248,4 +254,4 @@ plt.xlabel('interation')
 plt.ylabel('Smoothed cost')
 plt.show()
 
-utils.plot_circuit(cname,components, nets, board_dim, stats)
+utils.plot_circuit(cname,blocks, nets, board_dim, stats)

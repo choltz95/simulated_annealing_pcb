@@ -2,6 +2,7 @@ import sys
 import yaml
 import json
 import numpy as np
+import math
 import ast
 import utils
 import shapely
@@ -37,9 +38,9 @@ def read_pl(fname):
 				l = line.split()
 				cname = l[0]
 				dims = l[5]+l[6]
-				dims = [float(i) for i in dims[1:-1].split(",")]
-				x = int(l[1])
-				y = int(l[2])
+				dims = [float(i.strip()) for i in dims[1:-1].split(",")]
+				x = float(l[1].strip())
+				y = float(l[2].strip())
 				poly = Polygon([[x,y], \
 							   [x + dims[0],y], \
 							   [x + dims[0],y+dims[1]], \
@@ -48,7 +49,7 @@ def read_pl(fname):
 			else:
 				l = line.split()
 				pname = l[0]
-				coords = Point([int(l[1]),int(l[2])])
+				coords = Point([float(l[1].strip()),float(l[2].strip())])
 				board_pins[pname] = coords
 	elif t == 1:
 		for line in lines:
@@ -74,8 +75,12 @@ def read_nets(fname,components,board_pins):
 	nets = []
 	mod2net = {} # {component: [nets]}
 	i = -1
-	with open(fname, 'r') as f:
-		lines = f.read().splitlines()[8:]
+	with open(fname,'r') as f:
+		lines = f.read().splitlines()
+	target_ibdex = [i for i, s in enumerate(lines) if 'NetDegree' in s][0]
+	lines = lines[target_ibdex:]
+
+	t = -1
 	for line in lines:
 		if '#' in line:
 			continue
@@ -91,10 +96,20 @@ def read_nets(fname,components,board_pins):
 			nets[i].append([pin_name,pin])
 		else:
 			pin_name = l[0]
-			local_pin_loc = [float(l[3][1:])/100.0 + 0.5, float(l[4][1:])/100.0 + 0.5]
+			#if t == 0:
+			local_pin_loc = [float(l[3].replace('%',''))/100.0 + 0.5, float(l[4].replace('%',''))/100.0 + 0.5]
 			#pinx,piny = utils.pin_pos([pin_name, local_pin_loc], components)
 			#print(pin_name, local_pin_loc, pinx, piny)
 			#pin = Point([pinx,piny])
+			"""
+			else:
+				minx,miny,maxx,maxy = components[pin_name].bounds
+				w = (maxx - minx)
+				h = (maxy - miny)
+				pinx = (float(l[3][1:]) - minx)/(100*w) + 0.5
+				piny = (float(l[4][1:]) - miny)/(100*h) + 0.5
+				local_pin_loc = [pinx, piny]
+			"""
 			pin = local_pin_loc
 			nets[i].append([pin_name, pin])
 		if pin_name in mod2net:
@@ -106,8 +121,8 @@ def read_nets(fname,components,board_pins):
 
 def read_blocks(fname):
 	"""
-	Read & parse .blk (blocks) file
-	:param fname: .blk filename
+	Read & parse .blocks file
+	:param fname: .blocks filename
 	"""
 	blocks = {}
 	with open(fname, 'r') as f:
@@ -129,6 +144,13 @@ def read_blocks(fname):
 
 	return components
 
+def read_nodes(fname):
+	"""
+	Read & parse .nodes (blocks) file
+	:param fname: .nodes filename
+	"""
+	pass
+
 def write_pl(fname,components,board_pins):
 	with open(fname,'w') as f:
 		f.write('UMICH blocks 1.0\n')
@@ -143,8 +165,6 @@ def write_pl(fname,components,board_pins):
 			f.write(str(minx))
 			f.write('\t')
 			f.write(str(miny))
-			f.write('\t')
-			f.write('0')
 			f.write('\t')
 			f.write('DIMS = (' + str(maxx - minx) + ', ' + str(maxy - miny) + ')')
 			f.write(' : N\n')
@@ -163,7 +183,85 @@ def write_pl(fname,components,board_pins):
 			f.write('\t')
 			f.write(' : N\n')
 
-#blocksfile = '/Users/orange3xchicken/Downloads/merrill_place_example_1.blocks'
+def write_nodes(fname,components,board_pins):
+	with open(fname,'w') as f:
+		f.write('UCLA blocks 1.0\n')
+		f.write('\n')
+		f.write('\n')
+		f.write('\n')
+
+		f.write('NumNodes\t :\t ' + str(len(set([c for c in components if c not in board_pins]))))
+		f.write('\n')
+		f.write('NumTerminals\t :\t ' + str(len(board_pins)))
+
+		f.write('\n')
+
+		for cname in components:
+			component = components[cname]
+			f.write(cname)
+			f.write('\t')
+			minx,miny,maxx,maxy = component.bounds
+			f.write(str(maxx-minx))
+			f.write('\t')
+			f.write(str(maxy-miny))
+			f.write('\n')
+
+def write_newnets(fname,nets,components):
+	with open(fname,'w') as f:
+		f.write('UCLA nets 1.0\n')
+		f.write('\n')
+		f.write('\n')
+		f.write('\n')
+		f.write('NumNets\t :\t ' + str(len(nets)))
+		f.write('\n')
+		f.write('NumPins\t :\t ' + str(len(set([pin[0] for net in nets for pin in net]))))
+
+		f.write('\n')
+
+		for net in nets:
+			f.write('NetDegree : ' + str(len(net)) + '\n')
+			for pin in net:
+				pinname, pinloc = pin
+				if isinstance(pinloc, list): # component pin
+					pinx,piny = utils.pin_pos(pin, components)
+					f.write(pinname + ' B : ' + str(round(pinx,2)) + ' ' +  str(round(piny,2)) + '\n')
+				else: # terminal pin
+					f.write(pinname + ' B \n')
+
+def write_newpl(fname,components,board_pins):
+	with open(fname,'w') as f:
+		f.write('UCLA pl 1.0\n')
+		f.write('\n')
+		f.write('\n')
+		f.write('\n')
+		for cname in components:
+			component = components[cname]
+			f.write(cname)
+			f.write('\t')
+			minx,miny,maxx,maxy = component.bounds
+			f.write(str(minx))
+			f.write('\t')
+			f.write(str(miny))
+			f.write('\t')
+			#f.write('DIMS = (' + str(maxx - minx) + ', ' + str(maxy - miny) + ')')
+			f.write(': N\n')
+
+		f.write('\n')
+
+		for pname in board_pins:
+			if pname in components:
+				pass
+			pin = board_pins[pname]
+			f.write(pname)
+			f.write('\t')
+			f.write(str(pin.x))
+			f.write('\t')
+			f.write(str(pin.y))
+			f.write('\t')
+			f.write(' : N\n')
+
+
+#=blocksfile = '/Users/orange3xchicken/Downloads/merrill_place_example_1.blocks'
 #blk = read_blocks(blocksfile)
 #print(blk)
 #print(len(blk))

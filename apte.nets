@@ -1,0 +1,390 @@
+UCLA nets 1.0
+
+
+
+NumNets	 :	 97
+NumPins	 :	 82
+NetDegree : 10
+VDD B 
+cc_11 B : 3095.66 1826.0
+cc_12 B : 3095.66 1826.0
+cc_13 B : 3095.66 1826.0
+cc_14 B : 3095.66 1826.0
+cc_21 B : 3135.02 1832.0
+cc_22 B : 3135.02 1832.0
+cc_23 B : 3135.02 1832.0
+cc_24 B : 3135.02 1832.0
+clk B : 826.0 116.12
+NetDegree : 9
+GND B 
+cc_11 B : 3039.04 1826.0
+cc_12 B : 3039.04 1826.0
+cc_13 B : 3039.04 1826.0
+cc_14 B : 3039.04 1826.0
+cc_21 B : 3077.68 1832.0
+cc_22 B : 3077.68 1832.0
+cc_23 B : 3077.68 1832.0
+cc_24 B : 3077.68 1832.0
+NetDegree : 3
+new18 B 
+cc_11 B : 119.55 1826.0
+cc_12 B : 119.55 0.0
+NetDegree : 3
+new19 B 
+cc_11 B : 113.26 1826.0
+cc_12 B : 113.26 0.0
+NetDegree : 3
+new17 B 
+cc_11 B : 128.99 1826.0
+cc_12 B : 128.99 0.0
+NetDegree : 3
+new16 B 
+cc_11 B : 3146.0 1637.92
+cc_21 B : 168.86 0.0
+NetDegree : 9
+cc_11 B : 3146.0 1318.37
+cc_12 B : 3146.0 1318.37
+cc_13 B : 3146.0 1318.37
+cc_14 B : 3146.0 1318.37
+cc_21 B : 0.0 1386.82
+cc_22 B : 0.0 1386.82
+cc_23 B : 0.0 1386.82
+cc_24 B : 0.0 1386.82
+clk B : 315.53 0.0
+NetDegree : 9
+new1 B 
+cc_11 B : 3146.0 1157.68
+cc_12 B : 3146.0 1157.68
+cc_13 B : 3146.0 1157.68
+cc_14 B : 3146.0 1157.68
+cc_21 B : 0.0 846.38
+cc_22 B : 0.0 846.38
+cc_23 B : 0.0 846.38
+cc_24 B : 0.0 846.38
+NetDegree : 3
+new15 B 
+cc_11 B : 3146.0 965.95
+cc_21 B : 152.93 0.0
+NetDegree : 3
+new14 B 
+cc_11 B : 3146.0 401.72
+cc_21 B : 143.37 0.0
+NetDegree : 9
+cc_11 B : 3146.0 164.34
+cc_12 B : 3146.0 164.34
+cc_13 B : 3146.0 164.34
+cc_14 B : 3146.0 164.34
+cc_21 B : 0.0 1394.15
+cc_22 B : 0.0 1394.15
+cc_23 B : 0.0 1394.15
+cc_24 B : 0.0 1394.15
+clk B : 271.75 0.0
+NetDegree : 9
+cc_11 B : 3146.0 173.47
+cc_12 B : 3146.0 173.47
+cc_13 B : 3146.0 173.47
+cc_14 B : 3146.0 173.47
+cc_21 B : 0.0 1300.72
+cc_22 B : 0.0 1300.72
+cc_23 B : 0.0 1300.72
+cc_24 B : 0.0 1300.72
+clk B : 0.0 132.13
+NetDegree : 6
+cc_11 B : 3146.0 1816.87
+cc_12 B : 2755.9 0.0
+cc_12 B : 2749.6 0.0
+cc_21 B : 127.44 1832.0
+cc_21 B : 111.51 1832.0
+cc_22 B : 111.51 0.0
+NetDegree : 4
+cc_11 B : 3146.0 157.04
+cc_12 B : 3146.0 157.04
+cc_13 B : 3146.0 157.04
+cc_14 B : 3146.0 157.04
+NetDegree : 2
+cc_11 B : 3146.0 149.73
+cc_12 B : 953.24 0.0
+NetDegree : 9
+cc_11 B : 3146.0 140.6
+cc_12 B : 3146.0 140.6
+cc_13 B : 3146.0 140.6
+cc_14 B : 3146.0 140.6
+cc_21 B : 0.0 108.09
+cc_22 B : 0.0 108.09
+cc_23 B : 0.0 108.09
+cc_24 B : 0.0 108.09
+clk B : 779.74 0.0
+NetDegree : 2
+new5 B 
+cc_11 B : 0.0 87.65
+NetDegree : 2
+new4 B 
+cc_11 B : 0.0 944.04
+NetDegree : 2
+new3 B 
+cc_11 B : 0.0 965.95
+NetDegree : 3
+new2 B 
+cc_11 B : 0.0 1727.4
+cc_12 B : 0.0 87.65
+NetDegree : 2
+new8 B 
+cc_11 B : 113.26 0.0
+NetDegree : 2
+new10 B 
+cc_11 B : 2334.33 0.0
+NetDegree : 2
+new11 B 
+cc_11 B : 2390.96 0.0
+NetDegree : 2
+new6 B 
+cc_11 B : 119.55 0.0
+NetDegree : 2
+new7 B 
+cc_11 B : 128.99 0.0
+NetDegree : 2
+cc_11 B : 953.24 0.0
+cc_24 B : 232.58 1832.0
+NetDegree : 3
+new12 B 
+cc_11 B : 2755.9 0.0
+cc_21 B : 111.51 0.0
+NetDegree : 3
+new29 B 
+cc_12 B : 119.55 1826.0
+cc_13 B : 119.55 0.0
+NetDegree : 3
+new30 B 
+cc_12 B : 113.26 1826.0
+cc_13 B : 113.26 0.0
+NetDegree : 3
+new28 B 
+cc_12 B : 128.99 1826.0
+cc_13 B : 128.99 0.0
+NetDegree : 3
+cc_12 B : 3146.0 1637.92
+cc_21 B : 168.86 1832.0
+cc_22 B : 168.86 0.0
+NetDegree : 3
+cc_12 B : 3146.0 965.95
+cc_21 B : 152.93 1832.0
+cc_22 B : 152.93 0.0
+NetDegree : 3
+cc_12 B : 3146.0 401.72
+cc_21 B : 143.37 1832.0
+cc_22 B : 143.37 0.0
+NetDegree : 6
+cc_12 B : 3146.0 1816.87
+cc_13 B : 2755.9 0.0
+cc_13 B : 2749.6 0.0
+cc_22 B : 127.44 1832.0
+cc_22 B : 111.51 1832.0
+cc_23 B : 111.51 0.0
+NetDegree : 2
+cc_12 B : 3146.0 149.73
+cc_13 B : 953.24 0.0
+NetDegree : 2
+new22 B 
+cc_12 B : 0.0 944.04
+NetDegree : 2
+new21 B 
+cc_12 B : 0.0 965.95
+NetDegree : 3
+new20 B 
+cc_12 B : 0.0 1727.4
+cc_13 B : 0.0 87.65
+NetDegree : 3
+new40 B 
+cc_13 B : 119.55 1826.0
+cc_14 B : 119.55 0.0
+NetDegree : 3
+new41 B 
+cc_13 B : 113.26 1826.0
+cc_14 B : 113.26 0.0
+NetDegree : 3
+new39 B 
+cc_13 B : 128.99 1826.0
+cc_14 B : 128.99 0.0
+NetDegree : 3
+cc_13 B : 3146.0 1637.92
+cc_22 B : 168.86 1832.0
+cc_23 B : 168.86 0.0
+NetDegree : 3
+cc_13 B : 3146.0 965.95
+cc_22 B : 152.93 1832.0
+cc_23 B : 152.93 0.0
+NetDegree : 3
+cc_13 B : 3146.0 401.72
+cc_22 B : 143.37 1832.0
+cc_23 B : 143.37 0.0
+NetDegree : 6
+cc_13 B : 3146.0 1816.87
+cc_14 B : 2755.9 0.0
+cc_14 B : 2749.6 0.0
+cc_23 B : 127.44 1832.0
+cc_23 B : 111.51 1832.0
+cc_24 B : 111.51 0.0
+NetDegree : 2
+cc_13 B : 3146.0 149.73
+cc_14 B : 953.24 0.0
+NetDegree : 2
+new33 B 
+cc_13 B : 0.0 944.04
+NetDegree : 2
+new32 B 
+cc_13 B : 0.0 965.95
+NetDegree : 3
+new31 B 
+cc_13 B : 0.0 1727.4
+cc_14 B : 0.0 87.65
+NetDegree : 2
+new51 B 
+cc_14 B : 119.55 1826.0
+NetDegree : 2
+new52 B 
+cc_14 B : 113.26 1826.0
+NetDegree : 2
+new50 B 
+cc_14 B : 128.99 1826.0
+NetDegree : 3
+cc_14 B : 3146.0 1637.92
+cc_23 B : 168.86 1832.0
+cc_24 B : 168.86 0.0
+NetDegree : 3
+cc_14 B : 3146.0 965.95
+cc_23 B : 152.93 1832.0
+cc_24 B : 152.93 0.0
+NetDegree : 3
+cc_14 B : 3146.0 401.72
+cc_23 B : 143.37 1832.0
+cc_24 B : 143.37 0.0
+NetDegree : 2
+new46 B 
+cc_14 B : 3146.0 149.73
+NetDegree : 2
+new44 B 
+cc_14 B : 0.0 944.04
+NetDegree : 2
+new43 B 
+cc_14 B : 0.0 965.95
+NetDegree : 2
+new42 B 
+cc_14 B : 0.0 1727.4
+NetDegree : 2
+new54 B 
+cc_21 B : 232.58 0.0
+NetDegree : 2
+cc_21 B : 232.58 1832.0
+cc_22 B : 232.58 0.0
+NetDegree : 2
+new59 B 
+cc_21 B : 3186.0 1709.26
+NetDegree : 2
+new58 B 
+cc_21 B : 3186.0 1694.6
+NetDegree : 2
+new57 B 
+cc_21 B : 3186.0 848.22
+NetDegree : 2
+new56 B 
+cc_21 B : 3186.0 428.69
+NetDegree : 2
+new55 B 
+cc_21 B : 3186.0 148.39
+NetDegree : 2
+new60 B 
+cc_21 B : 3186.0 1822.84
+NetDegree : 5
+new0 B 
+cc_21 B : 0.0 1551.7
+cc_22 B : 0.0 1551.7
+cc_23 B : 0.0 1551.7
+cc_24 B : 0.0 1551.7
+NetDegree : 2
+cc_22 B : 232.58 1832.0
+cc_23 B : 232.58 0.0
+NetDegree : 2
+new66 B 
+cc_22 B : 3186.0 1709.26
+NetDegree : 2
+new65 B 
+cc_22 B : 3186.0 1694.6
+NetDegree : 2
+new64 B 
+cc_22 B : 3186.0 848.22
+NetDegree : 2
+new63 B 
+cc_22 B : 3186.0 428.69
+NetDegree : 2
+new62 B 
+cc_22 B : 3186.0 148.39
+NetDegree : 2
+new67 B 
+cc_22 B : 3186.0 1822.84
+NetDegree : 2
+cc_23 B : 232.58 1832.0
+cc_24 B : 232.58 0.0
+NetDegree : 2
+new73 B 
+cc_23 B : 3186.0 1709.26
+NetDegree : 2
+new72 B 
+cc_23 B : 3186.0 1694.6
+NetDegree : 2
+new71 B 
+cc_23 B : 3186.0 848.22
+NetDegree : 2
+new70 B 
+cc_23 B : 3186.0 428.69
+NetDegree : 2
+new69 B 
+cc_23 B : 3186.0 148.39
+NetDegree : 2
+new74 B 
+cc_23 B : 3186.0 1822.84
+NetDegree : 2
+new83 B 
+cc_24 B : 168.86 1832.0
+NetDegree : 2
+new85 B 
+cc_24 B : 143.37 1832.0
+NetDegree : 2
+new84 B 
+cc_24 B : 152.93 1832.0
+NetDegree : 2
+new82 B 
+cc_24 B : 289.93 1832.0
+NetDegree : 2
+new86 B 
+cc_24 B : 127.44 1832.0
+NetDegree : 2
+new81 B 
+cc_24 B : 583.04 1832.0
+NetDegree : 2
+new79 B 
+cc_24 B : 3186.0 1709.26
+NetDegree : 2
+new78 B 
+cc_24 B : 3186.0 1694.6
+NetDegree : 2
+new77 B 
+cc_24 B : 3186.0 848.22
+NetDegree : 2
+new76 B 
+cc_24 B : 3186.0 428.69
+NetDegree : 2
+new75 B 
+cc_24 B : 3186.0 148.39
+NetDegree : 2
+new80 B 
+cc_24 B : 3186.0 1822.84
+NetDegree : 2
+VSS B 
+clk B : 826.0 276.85
+NetDegree : 2
+TestHS1 B 
+clk B : 303.14 0.0
+NetDegree : 3
+Phi B 
+clk B : 791.31 0.0
+clk B : 295.71 0.0
