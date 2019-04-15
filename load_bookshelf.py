@@ -7,6 +7,7 @@ import ast
 import utils
 import shapely
 from shapely.geometry import Point, Polygon
+from shapely.affinity import translate, rotate
 
 def read_pl(fname):
 	"""
@@ -62,10 +63,51 @@ def read_pl(fname):
 			else:
 				l = line.split()
 				pname = l[0]
-				coords = Point([int(l[1]),int(l[2])])
+				coords = Point([float(l[1]),float(l[2])])
 				board_pins[pname] = coords
 
 	return components, board_pins
+
+def read_pl2(fname,components):
+	"""
+	Read & parse .pl (placement) file
+	:param fname: .pl filename
+	"""
+	with open(fname,'r') as f:
+		lines = f.read().splitlines()
+
+	t = -1
+	if 'UMICH' in lines[0]:
+		t = 0 # generally inp file
+	elif 'UCLA' in lines[0]:
+		t = 1 # generally parquetfp output type
+	else:
+		print('.pl file parse error')
+		return 0
+	lines = lines[4:]
+	bp = 0
+	comp2rot = {}
+	for line in lines:
+		print(line)
+		if line == '':
+			bp = 1
+			continue
+		else:
+			l = line.split()
+			pname = l[0].strip()
+			print(pname)
+			print(components)
+			minx, miny, maxx, maxy = components[pname].bounds
+			newx,newy = (float(l[1]),float(l[2]))
+			r = l[4]
+			comp2rot[pname] = r
+			rot2deg = {'N':0,'S':180,'E':90,'W':270}
+			components[pname] = rotate(components[pname],rot2deg[r])
+			minx, miny, maxx, maxy = components[pname].bounds
+			components[pname] = translate(components[pname],newx-minx,newy-miny)
+
+	return components, comp2rot
+
 
 def read_nets(fname,components,board_pins):
 	"""
@@ -116,7 +158,44 @@ def read_nets(fname,components,board_pins):
 			mod2net[pin_name].append(i)
 		else:
 			mod2net[pin_name] = [i]
+	return nets, mod2net
 
+def read_nets2(fname,components,board_pins):
+	"""
+	Read & parse .nets (netlist) file
+	:param fname: .nets filename
+	"""
+	nets = []
+	mod2net = {} # {component: [nets]}
+	i = -1
+	with open(fname,'r') as f:
+		lines = f.read().splitlines()
+	target_ibdex = [i for i, s in enumerate(lines) if 'NetDegree' in s][0]
+	lines = lines[target_ibdex:]
+
+	t = -1
+	for line in lines:
+		if '#' in line:
+			continue
+		if 'NetDegree' in line:
+			i += 1
+			nets.append([])
+			continue
+
+		l = line.split()
+		if len(l) < 3:
+			pin_name = l[0]
+			pin = board_pins[pin_name]
+			nets[i].append([pin_name,pin])
+		else:
+			pin_name = l[0]
+			local_pin_loc = [float(l[3]), float(l[4])]
+			pin = local_pin_loc
+			nets[i].append([pin_name, pin])
+		if pin_name in mod2net:
+			mod2net[pin_name].append(i)
+		else:
+			mod2net[pin_name] = [i]
 	return nets, mod2net
 
 def read_blocks(fname):
@@ -149,7 +228,23 @@ def read_nodes(fname):
 	Read & parse .nodes (blocks) file
 	:param fname: .nodes filename
 	"""
-	pass
+	blocks = {}
+	with open(fname, 'r') as f:
+		lines = f.read().splitlines()[8:]
+	components = {}
+	bp = 0
+	for line in lines:
+		if line == '':
+			bp = 1
+			continue
+		if bp == 0:
+			l = line.split()
+			cname = l[0]
+			w = float(l[1])
+			h = float(l[2])
+			poly = Polygon([[0,0],[w,0],[w,h],[0,h]])
+			components[cname] = poly
+	return components
 
 def write_pl(fname,components,board_pins):
 	with open(fname,'w') as f:
